@@ -1,4 +1,5 @@
 var tap = require('tap');
+var sinon = require('sinon');
 var retryPromise = require('./index');
 
 tap.test('resolves a successful promise right away', function(t){
@@ -21,20 +22,11 @@ tap.test('resolves by retrying until it succeeds', function(t){
 
   t.plan(2);
 
-  var callsBeforeSuccess = 3;
-  var calls = 0;
+  var succeedTheThirdTime = succeedAfter(3);
 
-  function tryOnce() {
-    if (++calls < callsBeforeSuccess) {
-      return Promise.reject('Try again');
-    } else {
-      return Promise.resolve('success');
-    }
-  }
-
-  retryPromise({retries: 100})(tryOnce).then(function(result){
+  retryPromise({retries: 100})(succeedTheThirdTime).then(function(result){
     t.equal(result, 'success', 'result should be original promise result');
-    t.equal(calls, 3, 'it kept calling the library');
+    t.equal(succeedTheThirdTime.calls, 3, 'it kept calling the library');
   }).catch(function(err){
     console.log(err);
     t.bailout('the promise was unexpectedly rejected');
@@ -70,3 +62,40 @@ tap.test('rejects after maximum retries is reached', function(t){
   });
 
 });
+
+tap.test('delay option', function(t){
+
+  t.plan(3);
+
+  var tick = 25;
+
+  var succeedTheSecondTime = succeedAfter(2);
+
+  retryPromise({ retries: 3, delay: 2 * tick})(succeedTheSecondTime).then(function(){
+    t.equal(succeedTheSecondTime.calls, 2, 'function should be called after specified delay');
+  });
+
+  setTimeout(function(){
+    t.equal(succeedTheSecondTime.calls, 1, 'function must be called right away the frst time');
+  }, 1 * tick);
+
+  setTimeout(function(){
+    t.equal(succeedTheSecondTime.calls, 2, 'function should be called after specified delay');
+  }, 3 * tick);
+
+});
+
+function succeedAfter(callsBeforeSuccess) {
+
+  function tryOnce() {
+    if (++tryOnce.calls < callsBeforeSuccess) {
+      return Promise.reject('Try again');
+    } else {
+      return Promise.resolve('success');
+    }
+  }
+
+  tryOnce.calls = 0;
+
+  return tryOnce;
+}

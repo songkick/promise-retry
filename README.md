@@ -5,7 +5,7 @@ Retry a function until its returned promise succeeds
 ```js
 var retryPromise = require('promise-retry');
 
-retryPromise({ retries: 2 })(resolvesTheThirdTime).then(function(result){
+retryPromise({ retries: 2, delay: 100 })(resolvesTheThirdTime).then(function(result){
   // never called here,
   // but if `retries` was >= 3,
   // result would be === 'yay!'
@@ -27,3 +27,9 @@ function resolvesTheThirdTime() {
   }
 }
 ```
+
+## Options
+
+`retries`: positive (>= 0) number. The initial call doesn't count as a retry. If you set it to `3`, then your function might be called up to 4 times.
+
+`delay`: the delay between retries. Does not apply on initial call.

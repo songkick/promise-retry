@@ -1,7 +1,11 @@
 {
   "name": "promise-retry",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Retry a function until its returned promise succeeds",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/songkick/promise-retry.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "tap test.js"
@@ -14,6 +18,7 @@
   "author": "Arnaud Rinquin",
   "license": "MIT",
   "devDependencies": {
+    "sinon": "^1.16.1",
     "tap": "^1.4.1"
   }
 }

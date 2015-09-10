@@ -17,7 +17,9 @@ module.exports = function(settings){
               message: 'Maximum retries count reached'
             });
           } else {
-            call(resolve, reject, failureCount, errors);
+            setTimeout(function(){
+              call(resolve, reject, failureCount, errors);
+            }, settings.delay);
           }
 
         });
