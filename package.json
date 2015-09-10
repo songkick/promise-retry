@@ -1,0 +1,19 @@
+{
+  "name": "promise-retry",
+  "version": "0.0.0",
+  "description": "Retry a function until its returned promise succeeds",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test.js"
+  },
+  "keywords": [
+    "promise",
+    "async",
+    "retry"
+  ],
+  "author": "Arnaud Rinquin",
+  "license": "MIT",
+  "devDependencies": {
+    "tap": "^1.4.1"
+  }
+}
