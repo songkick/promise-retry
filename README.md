@@ -1,4 +1,4 @@
-# promise-retry
+# promise-retry [![Build Status](https://travis-ci.org/songkick/promise-retry.svg)](https://travis-ci.org/songkick/promise-retry)
 
 Retry a function until its returned promise succeeds
 
