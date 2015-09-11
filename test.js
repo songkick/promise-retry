@@ -1,5 +1,4 @@
 var tap = require('tap');
-var sinon = require('sinon');
 var retryPromise = require('./index');
 
 tap.test('resolves a successful promise right away', function(t){

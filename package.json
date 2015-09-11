@@ -18,7 +18,6 @@
   "author": "Arnaud Rinquin",
   "license": "MIT",
   "devDependencies": {
-    "sinon": "^1.16.1",
     "tap": "^1.4.1"
   }
 }
