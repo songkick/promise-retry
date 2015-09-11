@@ -9,7 +9,7 @@ tap.test('resolves a successful promise right away', function(t){
     return Promise.resolve('success');
   }
 
-  retryPromise({retries: 100})(success).then(function(result){
+  retryPromise({retries: 100})(success)().then(function(result){
     t.equal(result, 'success', 'result should be original promise result');
   }).catch(function(err){
     t.bailout('the promise was unexpectedly rejected');
@@ -23,7 +23,7 @@ tap.test('resolves by retrying until it succeeds', function(t){
 
   var succeedTheThirdTime = succeedAfter(3);
 
-  retryPromise({retries: 100})(succeedTheThirdTime).then(function(result){
+  retryPromise({retries: 100})(succeedTheThirdTime)().then(function(result){
     t.equal(result, 'success', 'result should be original promise result');
     t.equal(succeedTheThirdTime.calls, 3, 'it kept calling the library');
   }).catch(function(err){
@@ -50,7 +50,7 @@ tap.test('rejects after maximum retries is reached', function(t){
     'nope'
   ];
 
-  retryPromise({retries: 10})(nope).then(function(err){
+  retryPromise({retries: 10})(nope)().then(function(err){
     t.bailout('the promise was unexpectedly resolved');
   }).catch(function(error){
     t.equal(error.fn, nope, 'initial functon was not returned');
@@ -70,7 +70,7 @@ tap.test('delay option', function(t){
 
   var succeedTheSecondTime = succeedAfter(2);
 
-  retryPromise({ retries: 3, delay: 2 * tick})(succeedTheSecondTime).then(function(){
+  retryPromise({ retries: 3, delay: 2 * tick})(succeedTheSecondTime)().then(function(){
     t.equal(succeedTheSecondTime.calls, 2, 'function should be called after specified delay');
   });
 
@@ -81,6 +81,45 @@ tap.test('delay option', function(t){
   setTimeout(function(){
     t.equal(succeedTheSecondTime.calls, 2, 'function should be called after specified delay');
   }, 3 * tick);
+
+});
+
+tap.test('composition', function(t){
+
+  t.plan(4);
+
+  var tick = 20;
+  var retryTwice = retryPromise({ retries: 2 });
+  var retryAterTwoTicks = retryPromise({ retries: 1, delay: 1 * tick });
+
+  var calls = 0;
+  var rejectionsLeft = 5;
+
+  var rejectsFiveTimes = function(){
+    calls++;
+    if (rejectionsLeft--) {
+      return Promise.reject('nope');
+    } else {
+      return Promise.resolve('ok');
+    }
+  };
+
+  retryAterTwoTicks(retryTwice(rejectsFiveTimes))().then(function(res){
+    t.equal(calls, 6, 'the initial function was called the wrong number of time');
+    t.equal(res, 'ok', 'the initial result was not returned');
+  }).catch(function(err){
+    t.bailout('the global promise was rejected');
+  });
+
+  // before the delayed retry triggers
+  setTimeout(function(){
+    t.equal(calls, 3, 'the call count before the delay is not right');
+  }, 1 * tick);
+
+  // well after the delayed retries
+  setTimeout(function(){
+    t.equal(calls, 6, 'the call count before the delay is not right');
+  }, 5 * tick);
 
 });
 

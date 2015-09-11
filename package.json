@@ -1,6 +1,6 @@
 {
   "name": "promise-retry",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Retry a function until its returned promise succeeds",
   "repository": {
     "type": "git",

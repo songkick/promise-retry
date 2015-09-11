@@ -25,8 +25,10 @@ module.exports = function(settings){
         });
     }
 
-    return new Promise(function(resolve, reject){
-      call(resolve, reject, 0, []);
-    });
+    return function(){
+      return new Promise(function(resolve, reject){
+        call(resolve, reject, 0, []);
+      });
+    };
   };
 }
