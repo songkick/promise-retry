@@ -35,7 +35,7 @@ tap.test('resolves by retrying until it succeeds', function(t){
 
 tap.test('rejects after maximum retries is reached', function(t){
 
-  t.plan(5);
+  t.plan(6);
 
   var calls = 0;
 
@@ -53,9 +53,10 @@ tap.test('rejects after maximum retries is reached', function(t){
   retryPromise({retries: 10})(nope)().then(function(err){
     t.bailout('the promise was unexpectedly resolved');
   }).catch(function(error){
+    t.ok(error instanceof retryPromise.OutOfRetriesError, 'error should be instance of OutOfRetriesError');
     t.equal(error.fn, nope, 'initial functon was not returned');
     t.equal(error.message, 'Maximum retries count reached', 'wrong error message');
-    t.equal(error.retries, 10, 'retries count should be retries + 1');
+    t.equal(error.settings.retries, 10, 'retries count should be retries + 1');
     t.similar(error.errors, elevenRejections, 'result should be original function rejections');
     t.equal(calls, 11, 'did not retry the right amount of time');
   });

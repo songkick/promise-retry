@@ -12,9 +12,12 @@ retryTwiceEveryHundredMil(resolvesTheThirdTime)()
     // but if `retries` was >= 3,
     // result would be === 'yay!'
   }).catch(function(err){
+    // err instanceof retryPromise.OutOfRetriesError === true
     // err === {
     //   message: 'Maximum retries count reached',
-    //   retries: 2,
+    //   settings: {
+    //     retries: 2,
+    //   },
     //   fn: resolvesTheThirdTime,
     //   errors: ['nope', 'nope', 'nope']
     // }

@@ -10,12 +10,7 @@ module.exports = function(settings){
           var errors = passedErrors.concat([err]);
           failureCount++;
           if (failureCount > settings.retries) {
-            reject({
-              errors: errors,
-              fn: fn,
-              retries: settings.retries,
-              message: 'Maximum retries count reached'
-            });
+            reject(new OutOfRetriesError(settings, fn, errors));
           } else {
             setTimeout(function(){
               call(resolve, reject, failureCount, errors);
@@ -32,3 +27,11 @@ module.exports = function(settings){
     };
   };
 }
+
+var OutOfRetriesError = module.exports.OutOfRetriesError = function(settings, fn, errors){
+    this.message = 'Maximum retries count reached';
+    this.settings = settings;
+    this.fn = fn;
+    this.errors = errors;
+};
+OutOfRetriesError.prototype = Object.create(Error.prototype);
