@@ -76,7 +76,7 @@ tap.test('rejects after maximum retries is reached', function (t) {
 
 });
 
-tap.test('delay option', function (t) {
+tap.test('delay option as number', function (t) {
 
     t.plan(3);
 
@@ -96,6 +96,47 @@ tap.test('delay option', function (t) {
         t.equal(succeedTheSecondTime.calls, 2, 'function should be called after specified delay');
     }, 3 * tick);
 
+});
+
+tap.test('delay option as function', function(t){
+    t.plan(5);
+
+    var tick = 25;
+
+    var succeedTheThirdTime = succeedAfter(3);
+
+    function retriesTimesTickTimesTwo(retries) {
+        var delay = retries * tick * 2;
+        return delay;
+    }
+
+    // t-0 request > fail
+    // t-0+2=2 request > fail
+    // t-2+4=6 request > fail
+    // t-6+8=14 request > success
+
+    retryPromise({retries: 3, delay: retriesTimesTickTimesTwo})(succeedTheThirdTime)().then(function () {
+        t.equal(succeedTheThirdTime.calls, 3, 'function should be called after specified delay');
+    });
+
+    setTimeout(function afterFirstCall() {
+        t.equal(succeedTheThirdTime.calls, 1, 'function must be called right away the first time');
+    }, 1 * tick);
+
+    setTimeout(function afterSecondCall() {
+        t.equal(succeedTheThirdTime.calls, 2, 'function should be retried after 2 ticks');
+    }, 3 * tick);
+
+    setTimeout(function beforeThirdCall() {
+        t.equal(succeedTheThirdTime.calls, 2, 'function must not have been called before 2 + 4 ticks the third time');
+    }, 5 * tick);
+
+    setTimeout(function afterThirdCall() {
+        t.equal(succeedTheThirdTime.calls, 3, 'function should be retried after 2 + 4 ticks');
+    }, 7 * tick);
+    setTimeout(function afterEverything() {
+        t.equal(succeedTheThirdTime.calls, 4, 'function should be called 4 times at t-14');
+    }, 15 * tick);
 });
 
 tap.test('composition', function (t) {

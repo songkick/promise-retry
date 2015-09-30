@@ -16,6 +16,10 @@ var promiseRetry = factory(function (fn, settings) {
         throw new Error("settings.retries must be a number");
     }
 
+    var getDelay = typeof settings.delay === 'function' ? settings.delay : function(){
+        return settings.delay;
+    }
+
     function executor(resolve, reject) {
         return fn()
             .then(resolve)
@@ -27,7 +31,7 @@ var promiseRetry = factory(function (fn, settings) {
                 } else {
                     setTimeout(function () {
                         executor(resolve, reject);
-                    }, settings.delay);
+                    }, getDelay(failureCount));
                 }
             });
     }

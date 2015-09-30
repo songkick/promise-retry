@@ -37,7 +37,24 @@ function resolvesTheThirdTime() {
 
 `retries`: positive (>= 0) number. The initial call doesn't count as a retry. If you set it to `3`, then your function might be called up to 4 times.
 
-`delay`: the delay between retries. Does not apply on initial call.
+`delay`: the delay between retries or a `function(retryIndex){}` returning the delay. Does not apply on initial call. If a function is passed, it will receive the retry index as first argument (`1, 2, 3 ...`).
+
+### Example:
+
+```js
+var retryWithIncreasingDelay = retryPromise({ retries: 10, delay: function(retryIndex) {
+    return 100 * retryIndex;
+});
+
+/* time line:
+
+0 > initial fail
+0 + 100 > first retry
+100 + 200 > second retry
+300 + 300 > third retry
+600 + 400 > fourth...
+
+```
 
 ## Composition
 
