@@ -5,8 +5,16 @@ var factory = function (createExecutor) {
                 return new Promise(createExecutor(fn, settings));
             };
         };
-    }
+    };
 };
+
+var OutOfRetriesError = function (settings, fn, errors) {
+    this.message = 'Maximum retries count reached';
+    this.settings = settings;
+    this.fn = fn;
+    this.errors = errors;
+};
+OutOfRetriesError.prototype = Object.create(Error.prototype);
 
 var promiseRetry = factory(function (fn, settings) {
     var failureCount = 0,
@@ -18,7 +26,7 @@ var promiseRetry = factory(function (fn, settings) {
 
     var getDelay = typeof settings.delay === 'function' ? settings.delay : function(){
         return settings.delay;
-    }
+    };
 
     function executor(resolve, reject) {
         return fn()
@@ -39,13 +47,6 @@ var promiseRetry = factory(function (fn, settings) {
     return executor;
 });
 
-var OutOfRetriesError = function (settings, fn, errors) {
-    this.message = 'Maximum retries count reached';
-    this.settings = settings;
-    this.fn = fn;
-    this.errors = errors;
-};
-OutOfRetriesError.prototype = Object.create(Error.prototype);
 
 promiseRetry.OutOfRetriesError = OutOfRetriesError;
 

@@ -24,7 +24,7 @@ tap.test('resolves a successful promise right away', function (t) {
 
     retryPromise({retries: 100})(success)().then(function (result) {
         t.equal(result, 'success', 'result should be original promise result');
-    }).catch(function (err) {
+    }).catch(function () {
         t.bailout('the promise was unexpectedly rejected');
     });
 
@@ -39,8 +39,7 @@ tap.test('resolves by retrying until it succeeds', function (t) {
     retryPromise({retries: 100})(succeedTheThirdTime)().then(function (result) {
         t.equal(result, 'success', 'result should be original promise result');
         t.equal(succeedTheThirdTime.calls, 3, 'it kept calling the library');
-    }).catch(function (err) {
-        console.log(err);
+    }).catch(function () {
         t.bailout('the promise was unexpectedly rejected');
     });
 
@@ -63,7 +62,7 @@ tap.test('rejects after maximum retries is reached', function (t) {
         'nope'
     ];
 
-    retryPromise({retries: 10})(nope)().then(function (err) {
+    retryPromise({retries: 10})(nope)().then(function () {
         t.bailout('the promise was unexpectedly resolved');
     }).catch(function (error) {
         t.ok(error instanceof retryPromise.OutOfRetriesError, 'error should be instance of OutOfRetriesError');
@@ -162,7 +161,7 @@ tap.test('composition', function (t) {
     retryAterTwoTicks(retryTwice(rejectsFiveTimes))().then(function (res) {
         t.equal(calls, 6, 'the initial function was called the wrong number of time');
         t.equal(res, 'ok', 'the initial result was not returned');
-    }).catch(function (err) {
+    }).catch(function () {
         t.bailout('the global promise was rejected');
     });
 
