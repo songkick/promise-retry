@@ -1,6 +1,6 @@
 {
-  "name": "promise-retry",
-  "version": "1.2.0",
+  "name": "@songkick/promise-retry",
+  "version": "1.2.1",
   "description": "Retry a function until its returned promise succeeds",
   "repository": {
     "type": "git",
@@ -21,5 +21,10 @@
   "devDependencies": {
     "codeclimate-test-reporter": "^0.1.1",
     "tap": "^1.4.1"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/songkick/promise-retry/issues"
+  },
+  "homepage": "https://github.com/songkick/promise-retry",
+  "dependencies": {}
 }
