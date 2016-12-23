@@ -3,7 +3,7 @@
 Retry a function until its returned promise succeeds
 
 ```js
-var retryPromise = require('promise-retry');
+var retryPromise = require('@songkick/promise-retry');
 var retryTwiceEveryHundredMil = retryPromise({ retries: 2, delay: 100 });
 
 retryTwiceEveryHundredMil(resolvesTheThirdTime)()
